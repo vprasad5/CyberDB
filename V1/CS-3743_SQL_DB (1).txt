@@ -1,0 +1,57 @@
+CREATE DATABASE sql_finaltwo;
+USE sql_finaltwo;
+
+-- CS-3743
+
+-- Investigator Table
+CREATE TABLE Investigator (
+    EmployeeID INT PRIMARY KEY,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL
+);
+
+-- Device Table
+CREATE TABLE Device (
+    DeviceID INT AUTO_INCREMENT PRIMARY KEY,
+    DeviceType ENUM('cell phone', 'camera', 'IoT') NOT NULL,
+    PhysicalStateDescription TEXT,
+    HardwareSpecifications TEXT,
+    LoggedBy INT,
+    FOREIGN KEY (LoggedBy) REFERENCES Investigator(EmployeeID)
+);
+
+-- InvestigativeAction Table
+CREATE TABLE InvestigativeAction (
+    ActionID INT AUTO_INCREMENT PRIMARY KEY,
+    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ActionDescription TEXT NOT NULL,
+    DeviceID INT,
+    FOREIGN KEY (DeviceID) REFERENCES Device(DeviceID)
+);
+
+-- Tool Table
+CREATE TABLE Tool (
+    ToolID INT AUTO_INCREMENT PRIMARY KEY,
+    ToolName VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- DataEntry Table
+CREATE TABLE DataEntry (
+    DataID INT AUTO_INCREMENT PRIMARY KEY,
+    ExtractedDataFiles BLOB,
+    Notes TEXT,
+    ToolID INT,
+    DeviceID INT,
+    FOREIGN KEY (ToolID) REFERENCES Tool(ToolID),
+    FOREIGN KEY (DeviceID) REFERENCES Device(DeviceID)
+);
+
+-- ChainOfCustodyRecord Table
+CREATE TABLE ChainOfCustodyRecord (
+    RecordID INT AUTO_INCREMENT PRIMARY KEY,
+    HandlerEmployeeID INT,
+    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    DeviceID INT,
+    FOREIGN KEY (HandlerEmployeeID) REFERENCES Investigator(EmployeeID),
+    FOREIGN KEY (DeviceID) REFERENCES Device(DeviceID)
+);
